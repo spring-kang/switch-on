@@ -36,11 +36,18 @@ async function request<T>(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const text = await response.text();
+    const error = text ? JSON.parse(text) : { error: "요청에 실패했습니다" };
     throw new Error(error.error || "요청에 실패했습니다");
   }
 
-  return response.json();
+  // 204 No Content 또는 빈 응답 처리
+  if (response.status === 204 || response.headers.get("content-length") === "0") {
+    return null as T;
+  }
+
+  const text = await response.text();
+  return text ? JSON.parse(text) : (null as T);
 }
 
 // 회원가입
