@@ -87,6 +87,6 @@ public class Challenge {
   public boolean canJoin() {
     return status == ChallengeStatus.RECRUITING
       && participants.size() < maxParticipants
-      && LocalDate.now().isBefore(startDate);
+      && !LocalDate.now().isAfter(startDate);
   }
 }
