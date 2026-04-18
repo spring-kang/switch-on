@@ -94,3 +94,90 @@ export function getStoredUser(): UserInfo | null {
 export function isAuthenticated(): boolean {
   return !!localStorage.getItem("accessToken");
 }
+
+// Challenge 관련 타입
+export interface CreatorInfo {
+  id: number;
+  nickname: string;
+}
+
+export interface Challenge {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  depositAmount: number;
+  status: "RECRUITING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+  creator: CreatorInfo;
+  isParticipating: boolean;
+  createdAt: string;
+}
+
+export interface Participant {
+  id: number;
+  userId: number;
+  nickname: string;
+  depositAmount: number;
+  depositStatus: "PENDING" | "PAID" | "REFUNDED" | "FORFEITED";
+  status: "ACTIVE" | "WITHDRAWN" | "COMPLETED" | "FAILED";
+  achievementRate: number;
+  joinedAt: string;
+}
+
+export interface CreateChallengeRequest {
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  maxParticipants: number;
+  depositAmount: number;
+}
+
+// 챌린지 목록 조회
+export async function getChallenges(): Promise<Challenge[]> {
+  return request<Challenge[]>("/challenges");
+}
+
+// 챌린지 상세 조회
+export async function getChallenge(id: number): Promise<Challenge> {
+  return request<Challenge>(`/challenges/${id}`);
+}
+
+// 챌린지 생성
+export async function createChallenge(
+  data: CreateChallengeRequest
+): Promise<Challenge> {
+  return request<Challenge>("/challenges", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+// 챌린지 참가
+export async function joinChallenge(id: number): Promise<Participant> {
+  return request<Participant>(`/challenges/${id}/join`, {
+    method: "POST",
+    body: JSON.stringify({ paymentMethod: "MOCK" }),
+  });
+}
+
+// 챌린지 탈퇴
+export async function leaveChallenge(id: number): Promise<void> {
+  return request<void>(`/challenges/${id}/leave`, {
+    method: "DELETE",
+  });
+}
+
+// 챌린지 참가자 목록
+export async function getParticipants(id: number): Promise<Participant[]> {
+  return request<Participant[]>(`/challenges/${id}/participants`);
+}
+
+// 내가 참가한 챌린지 목록
+export async function getMyChallenges(): Promise<Challenge[]> {
+  return request<Challenge[]>("/challenges/my");
+}

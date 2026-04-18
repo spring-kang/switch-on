@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import MonthlyHeatmap from "@/components/MonthlyHeatmap";
 import Header from "@/components/Header";
 
@@ -52,12 +53,18 @@ export default function Home() {
             잔디를 심듯이 매일 미션을 완료하고 성장을 확인하세요.
           </p>
           <div className="flex items-center justify-center gap-4">
-            <button className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl shadow-lg shadow-emerald-500/25 transition-all hover:shadow-xl hover:shadow-emerald-500/30">
+            <Link
+              href="/challenges"
+              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-xl shadow-lg shadow-emerald-500/25 transition-all hover:shadow-xl hover:shadow-emerald-500/30"
+            >
               챌린지 참여하기
-            </button>
-            <button className="px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            </Link>
+            <Link
+              href="/challenges"
+              className="px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
               더 알아보기
-            </button>
+            </Link>
           </div>
         </section>
 
@@ -205,7 +212,7 @@ export default function Home() {
       <footer className="border-t border-gray-200 dark:border-gray-800 py-8">
         <div className="max-w-6xl mx-auto px-6 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>Switch-On - 함께하는 다이어트 챌린지</p>
-          <p className="mt-1">Phase 2 Complete</p>
+          <p className="mt-1">Phase 3 - Challenge System</p>
         </div>
       </footer>
     </div>

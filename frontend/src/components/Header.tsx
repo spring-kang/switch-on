@@ -46,7 +46,7 @@ export default function Header() {
 
         <nav className="flex items-center gap-6">
           <Link
-            href="#"
+            href="/challenges"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors"
           >
             챌린지
