@@ -8,7 +8,10 @@ import com.switchon.entity.ChallengeParticipant.DepositStatus;
 import com.switchon.entity.User;
 import com.switchon.repository.ChallengeParticipantRepository;
 import com.switchon.repository.ChallengeRepository;
+import com.switchon.repository.MissionRepository;
 import com.switchon.repository.UserRepository;
+import com.switchon.entity.Mission;
+import com.switchon.entity.Mission.MissionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class ChallengeService {
   private final ChallengeRepository challengeRepository;
   private final ChallengeParticipantRepository participantRepository;
   private final UserRepository userRepository;
+  private final MissionRepository missionRepository;
 
   // 챌린지 생성
   @Transactional
@@ -47,7 +51,38 @@ public class ChallengeService {
 
     challengeRepository.save(challenge);
 
+    // 기본 미션 생성
+    createDefaultMissions(challenge);
+
     return ChallengeResponse.from(challenge, false);
+  }
+
+  // 기본 미션 생성
+  private void createDefaultMissions(Challenge challenge) {
+    // 간헐적 단식 미션
+    Mission fastingMission = Mission.builder()
+      .challenge(challenge)
+      .title("간헐적 단식 16:8")
+      .description("16시간 단식, 8시간 식사 타임을 지켜주세요")
+      .type(MissionType.FASTING)
+      .fastingHours(16)
+      .eatingWindowStart("12:00")
+      .eatingWindowEnd("20:00")
+      .isActive(true)
+      .build();
+
+    // 식단 인증 미션
+    Mission mealLogMission = Mission.builder()
+      .challenge(challenge)
+      .title("식단 인증")
+      .description("오늘 먹은 식사를 사진으로 인증해주세요")
+      .type(MissionType.MEAL_LOG)
+      .requiredMeals(3)
+      .isActive(true)
+      .build();
+
+    missionRepository.save(fastingMission);
+    missionRepository.save(mealLogMission);
   }
 
   // 챌린지 목록 조회 (모집중)

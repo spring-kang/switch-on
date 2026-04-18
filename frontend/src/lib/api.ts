@@ -188,3 +188,85 @@ export async function getParticipants(id: number): Promise<Participant[]> {
 export async function getMyChallenges(): Promise<Challenge[]> {
   return request<Challenge[]>("/challenges/my");
 }
+
+// Mission 관련 타입
+export interface Mission {
+  id: number;
+  challengeId: number;
+  title: string;
+  description: string;
+  type: "FASTING" | "MEAL_LOG";
+  fastingHours?: number;
+  eatingWindowStart?: string;
+  eatingWindowEnd?: string;
+  requiredMeals?: number;
+  isActive: boolean;
+  completedToday: boolean;
+  completedMealsToday: number;
+}
+
+export interface DailyMissionStatus {
+  date: string;
+  totalMissions: number;
+  completedMissions: number;
+  allCompleted: boolean;
+  missions: Mission[];
+}
+
+export interface MissionCompletion {
+  id: number;
+  missionId: number;
+  missionTitle: string;
+  userId: number;
+  nickname: string;
+  completionDate: string;
+  status: "COMPLETED" | "PARTIAL" | "SKIPPED";
+  imageUrl?: string;
+  note?: string;
+  mealType?: "BREAKFAST" | "LUNCH" | "DINNER";
+  completedAt: string;
+}
+
+export interface CompleteMissionRequest {
+  imageUrl?: string;
+  note?: string;
+  mealType?: "BREAKFAST" | "LUNCH" | "DINNER";
+}
+
+// 챌린지 미션 목록 조회
+export async function getMissions(challengeId: number): Promise<Mission[]> {
+  return request<Mission[]>(`/challenges/${challengeId}/missions`);
+}
+
+// 오늘의 미션 상태
+export async function getTodayMissionStatus(challengeId: number): Promise<DailyMissionStatus> {
+  return request<DailyMissionStatus>(`/challenges/${challengeId}/missions/today`);
+}
+
+// 미션 완료
+export async function completeMission(
+  challengeId: number,
+  missionId: number,
+  data?: CompleteMissionRequest
+): Promise<MissionCompletion> {
+  return request<MissionCompletion>(`/challenges/${challengeId}/missions/${missionId}/complete`, {
+    method: "POST",
+    body: JSON.stringify(data || {}),
+  });
+}
+
+// 오늘의 완료 목록
+export async function getTodayCompletions(challengeId: number): Promise<MissionCompletion[]> {
+  return request<MissionCompletion[]>(`/challenges/${challengeId}/missions/completions/today`);
+}
+
+// 미션 히스토리 (히트맵용)
+export async function getMissionHistory(
+  challengeId: number,
+  startDate: string,
+  endDate: string
+): Promise<DailyMissionStatus[]> {
+  return request<DailyMissionStatus[]>(
+    `/challenges/${challengeId}/missions/history?startDate=${startDate}&endDate=${endDate}`
+  );
+}

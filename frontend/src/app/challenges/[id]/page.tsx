@@ -9,11 +9,14 @@ import {
   getParticipants,
   joinChallenge,
   leaveChallenge,
+  getMissions,
   Challenge,
   Participant,
+  Mission,
   isAuthenticated,
   getStoredUser,
 } from "@/lib/api";
+import MissionCard from "@/components/MissionCard";
 
 export default function ChallengeDetailPage({
   params,
@@ -24,6 +27,7 @@ export default function ChallengeDetailPage({
   const router = useRouter();
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,10 +45,25 @@ export default function ChallengeDetailPage({
       ]);
       setChallenge(challengeData);
       setParticipants(participantsData);
+
+      // 참가중이면 미션도 로드
+      if (challengeData.isParticipating) {
+        const missionsData = await getMissions(Number(id));
+        setMissions(missionsData);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "챌린지를 불러오는데 실패했습니다");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMissions = async () => {
+    try {
+      const missionsData = await getMissions(Number(id));
+      setMissions(missionsData);
+    } catch (err) {
+      console.error("미션 로드 실패:", err);
     }
   };
 
@@ -254,6 +273,25 @@ export default function ChallengeDetailPage({
             )}
           </div>
         </div>
+
+        {/* 오늘의 미션 (참가중일 때만) */}
+        {challenge.isParticipating && missions.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              오늘의 미션
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {missions.map((mission) => (
+                <MissionCard
+                  key={mission.id}
+                  mission={mission}
+                  challengeId={Number(id)}
+                  onComplete={loadMissions}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 참가자 목록 */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
