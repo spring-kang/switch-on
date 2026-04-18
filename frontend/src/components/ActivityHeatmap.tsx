@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface DayData {
   date: string;
@@ -13,17 +13,28 @@ interface ActivityHeatmapProps {
   weeks?: number;
 }
 
-// 더미 데이터 생성
+// 시드 기반 랜덤 (동일한 날짜에 동일한 값)
+const seededRandom = (seed: number): number => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+// 더미 데이터 생성 (결정론적)
 const generateDummyData = (weeks: number): DayData[] => {
   const data: DayData[] = [];
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const totalDays = weeks * 7;
 
   for (let i = totalDays - 1; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split("T")[0];
 
-    const random = Math.random();
+    // 날짜를 시드로 사용하여 동일한 결과 보장
+    const seed = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+    const random = seededRandom(seed);
+
     let level: 0 | 1 | 2 | 3 | 4;
     let count: number;
 
@@ -45,7 +56,7 @@ const generateDummyData = (weeks: number): DayData[] => {
     }
 
     data.push({
-      date: date.toISOString().split("T")[0],
+      date: dateStr,
       level,
       count,
     });
@@ -72,6 +83,12 @@ export default function ActivityHeatmap({
   data,
   weeks = 20,
 }: ActivityHeatmapProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const heatmapData = useMemo(() => {
     return data || generateDummyData(weeks);
   }, [data, weeks]);
@@ -91,11 +108,13 @@ export default function ActivityHeatmap({
     let lastMonth = -1;
 
     weeklyData.forEach((week, weekIndex) => {
-      const firstDay = new Date(week[0]?.date);
-      const month = firstDay.getMonth();
-      if (month !== lastMonth) {
-        labels.push({ month: MONTHS[month], index: weekIndex });
-        lastMonth = month;
+      if (week[0]) {
+        const firstDay = new Date(week[0].date);
+        const month = firstDay.getMonth();
+        if (month !== lastMonth) {
+          labels.push({ month: MONTHS[month], index: weekIndex });
+          lastMonth = month;
+        }
       }
     });
 
@@ -114,6 +133,19 @@ export default function ActivityHeatmap({
     }
     return streak;
   }, [heatmapData]);
+
+  // SSR 중에는 로딩 상태 표시
+  if (!mounted) {
+    return (
+      <div className="w-full">
+        <div className="flex gap-6 mb-4">
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        </div>
+        <div className="h-[100px] bg-gray-100 dark:bg-gray-800 rounded animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -137,12 +169,12 @@ export default function ActivityHeatmap({
         <div className="inline-block">
           {/* 월 라벨 */}
           <div className="flex ml-8 mb-1">
-            {monthLabels.map(({ month, index }) => (
+            {monthLabels.map(({ month, index }, i) => (
               <div
                 key={`${month}-${index}`}
                 className="text-xs text-gray-500 dark:text-gray-400"
                 style={{
-                  marginLeft: index === 0 ? 0 : `${(index - (monthLabels[monthLabels.indexOf({ month, index }) - 1]?.index || 0)) * 14 - 20}px`,
+                  marginLeft: i === 0 ? 0 : `${(index - (monthLabels[i - 1]?.index || 0)) * 14 - 20}px`,
                   minWidth: "30px",
                 }}
               >
@@ -168,7 +200,7 @@ export default function ActivityHeatmap({
             <div className="flex gap-[3px]">
               {weeklyData.map((week, weekIndex) => (
                 <div key={weekIndex} className="flex flex-col gap-[3px]">
-                  {week.map((day, dayIndex) => (
+                  {week.map((day) => (
                     <div
                       key={day.date}
                       className={`w-[10px] h-[10px] rounded-sm ${LEVEL_COLORS[day.level]}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ActivityHeatmap from "@/components/ActivityHeatmap";
+import MonthlyHeatmap from "@/components/MonthlyHeatmap";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [healthStatus, setHealthStatus] = useState<{
@@ -27,30 +28,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      {/* 헤더 */}
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
-            </div>
-            <span className="font-bold text-xl text-gray-800 dark:text-white">
-              Switch-On
-            </span>
-          </div>
-          <nav className="flex items-center gap-6">
-            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">
-              챌린지
-            </a>
-            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">
-              커뮤니티
-            </a>
-            <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors">
-              로그인
-            </button>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* 메인 콘텐츠 */}
       <main className="max-w-6xl mx-auto px-6 py-12">
@@ -86,23 +64,17 @@ export default function Home() {
         {/* 활동 히트맵 */}
         <section className="mb-16">
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   나의 다이어트 기록
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  매일 미션을 완료하고 잔디를 채워보세요
+                  매일 미션을 완료하고 달력을 채워보세요
                 </p>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
-                <span className="text-2xl">🔥</span>
-                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                  7일 연속 달성!
-                </span>
-              </div>
             </div>
-            <ActivityHeatmap weeks={16} />
+            <MonthlyHeatmap />
           </div>
         </section>
 
@@ -130,15 +102,23 @@ export default function Home() {
               </p>
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium text-emerald-600">12:00</span> ~ <span className="font-medium text-emerald-600">20:00</span>
+                  <span className="font-medium text-emerald-600">12:00</span> ~{" "}
+                  <span className="font-medium text-emerald-600">20:00</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">남은 시간</div>
-                  <div className="font-semibold text-gray-900 dark:text-white">4시간 32분</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    남은 시간
+                  </div>
+                  <div className="font-semibold text-gray-900 dark:text-white">
+                    4시간 32분
+                  </div>
                 </div>
               </div>
               <div className="mt-4 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-orange-400 to-rose-500 rounded-full" style={{ width: "65%" }} />
+                <div
+                  className="h-full bg-gradient-to-r from-orange-400 to-rose-500 rounded-full"
+                  style={{ width: "65%" }}
+                />
               </div>
             </div>
 
@@ -161,15 +141,21 @@ export default function Home() {
               <div className="flex gap-2">
                 <div className="flex-1 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-center border-2 border-emerald-500">
                   <div className="text-lg mb-1">🌅</div>
-                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">아침</div>
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    아침
+                  </div>
                 </div>
                 <div className="flex-1 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-center border-2 border-emerald-500">
                   <div className="text-lg mb-1">☀️</div>
-                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">점심</div>
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    점심
+                  </div>
                 </div>
                 <div className="flex-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl text-center border-2 border-dashed border-gray-300 dark:border-gray-700 cursor-pointer hover:border-emerald-400 transition-colors">
                   <div className="text-lg mb-1">🌙</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">저녁</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    저녁
+                  </div>
                 </div>
               </div>
             </div>
@@ -191,17 +177,21 @@ export default function Home() {
                 {loading ? "확인 중..." : "백엔드 연결 확인"}
               </button>
               {healthStatus && (
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${
-                  healthStatus.error
-                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-                    : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
-                }`}>
+                <div
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${
+                    healthStatus.error
+                      ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                      : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
+                  }`}
+                >
                   {healthStatus.error ? (
                     <span>{healthStatus.error}</span>
                   ) : (
                     <>
                       <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <span>{healthStatus.status} - {healthStatus.service}</span>
+                      <span>
+                        {healthStatus.status} - {healthStatus.service}
+                      </span>
                     </>
                   )}
                 </div>
@@ -215,7 +205,7 @@ export default function Home() {
       <footer className="border-t border-gray-200 dark:border-gray-800 py-8">
         <div className="max-w-6xl mx-auto px-6 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>Switch-On - 함께하는 다이어트 챌린지</p>
-          <p className="mt-1">Phase 1 Complete</p>
+          <p className="mt-1">Phase 2 Complete</p>
         </div>
       </footer>
     </div>
