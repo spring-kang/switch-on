@@ -19,11 +19,11 @@ public class CreateChallengeRequest {
   private String description;
 
   @NotNull(message = "시작일은 필수입니다")
-  @Future(message = "시작일은 미래 날짜여야 합니다")
+  @FutureOrPresent(message = "시작일은 오늘 이후여야 합니다")
   private LocalDate startDate;
 
   @NotNull(message = "종료일은 필수입니다")
-  @Future(message = "종료일은 미래 날짜여야 합니다")
+  @FutureOrPresent(message = "종료일은 오늘 이후여야 합니다")
   private LocalDate endDate;
 
   @NotNull(message = "최대 참가 인원은 필수입니다")
