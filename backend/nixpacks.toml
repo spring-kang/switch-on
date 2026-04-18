@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["jdk17"]
+
+[phases.build]
+cmds = ["./gradlew build -x test"]
+
+[start]
+cmd = "java -Dspring.profiles.active=prod -jar build/libs/switch-on-0.0.1-SNAPSHOT.jar"
