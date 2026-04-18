@@ -17,12 +17,15 @@ export interface ApiError {
   error: string;
 }
 
+// 브라우저 환경 체크
+const isBrowser = typeof window !== "undefined";
+
 // API 요청 헬퍼
 async function request<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem("accessToken");
+  const token = isBrowser ? localStorage.getItem("accessToken") : null;
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -80,25 +83,31 @@ export async function getCurrentUser(): Promise<UserInfo> {
 
 // 로그아웃
 export function logout() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("user");
-  window.location.href = "/login";
+  if (isBrowser) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  }
 }
 
 // 토큰 저장
 export function saveAuth(response: AuthResponse) {
-  localStorage.setItem("accessToken", response.accessToken);
-  localStorage.setItem("user", JSON.stringify(response.user));
+  if (isBrowser) {
+    localStorage.setItem("accessToken", response.accessToken);
+    localStorage.setItem("user", JSON.stringify(response.user));
+  }
 }
 
 // 저장된 사용자 정보 가져오기
 export function getStoredUser(): UserInfo | null {
+  if (!isBrowser) return null;
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
 }
 
 // 로그인 여부 확인
 export function isAuthenticated(): boolean {
+  if (!isBrowser) return false;
   return !!localStorage.getItem("accessToken");
 }
 
